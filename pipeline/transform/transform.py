@@ -2,7 +2,6 @@ from pyspark.sql import SparkSession, functions as F
 from pyspark.sql import DataFrame, types as T
 
 def read_addressbase(sps: SparkSession, abpath: str) -> DataFrame:
-    #df_ab = sps.read.csv('../../../data/ab-plus_SX9090_withhead.csv', header=True, inferSchema=True)
     
     df_ab = sps.read.csv(abpath, header=True, inferSchema=True)
     
