@@ -1,25 +1,33 @@
 from pyspark.sql import SparkSession, functions as F
 from pyspark.sql import DataFrame, types as T
 
-def read_addressbase(sps: SparkSession, abpath: str) -> DataFrame:
+def read_csv(sps: SparkSession, csvpath: str) -> DataFrame:
     
-    df_ab = sps.read.csv(abpath, header=True, inferSchema=True)
+    df_csv = sps.read.csv(csvpath, header=True, inferSchema=True)
     
-    return df_ab
+    return df_csv
 
-def read_buildingaddress(sps: SparkSession, bldadrpath: str) -> DataFrame:
+def read_parquet(sps: SparkSession, parquetpath: str) -> DataFrame:
     
-    df_bldadr = sps.read.csv(bldadrpath, header=True, inferSchema=True)
+    df_parquet = sps.read.parquet(parquetpath)
     
-    return df_bldadr
+    return df_parquet
 
+def write__repart_parquet(sps: SparkSession, df_parquet: DataFrame, numparts: int, parquetpath: str):
+    
+    df_parquet.repartition(numparts).write.mode('overwrite').parquet(parquetpath)
+
+def write_parquet(sps: SparkSession, df_parquet: DataFrame, parquetpath: str):
+
+    df_parquet.write.mode('overwrite').parquet(parquetpath)
+    
 def prep_abmatchdframe(sps: SparkSession, df_ab: DataFrame) -> DataFrame:
     
     df_abstr = df_ab.select(
         'UPRN',
         F.substring_index('POSTCODE_LOCATOR', ' ', 1).alias('OUTCODE'),
         'LOCALITY',
-        F.concat_ws('|',
+        F.concat_ws(' ',
                     F.coalesce('RM_ORGANISATION_NAME','LA_ORGANISATION'),
                     'DEPARTMENT_NAME',
                     'SUB_BUILDING_NAME',
@@ -34,12 +42,3 @@ def prep_abmatchdframe(sps: SparkSession, df_ab: DataFrame) -> DataFrame:
         )
     
     return df_abstr
-
-def write_abmatchdframe(sps: SparkSession, df_ab: DataFrame, numparts: int, abinpath: str):
-    
-    df_ab.repartition(numparts).write.mode('overwrite').parquet(abinpath)
-    
-def write_bldadrmatchdframe(sps: SparkSession, df_bldadr: DataFrame, bldadrinpath: str):
-
-    df_bldadr.write.mode('overwrite').parquet(bldadrinpath)
-    
