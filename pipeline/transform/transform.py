@@ -25,7 +25,7 @@ def prep_abmatchdframe(sps: SparkSession, df_ab: DataFrame) -> DataFrame:
     
     df_abstr = df_ab.select(
         'UPRN',
-        F.substring_index('POSTCODE_LOCATOR', ' ', 1).alias('OUTCODE'),
+        F.substring_index('POSTCODE_LOCATOR', ' ', -1).alias('OUTCODE'),
         'LOCALITY',
         F.concat_ws(' ',
                     F.coalesce('RM_ORGANISATION_NAME','LA_ORGANISATION'),
