@@ -1,8 +1,8 @@
 name: addressmatching_unitest
-run-name: ${{ github.actor }} is unit testing addressmatching
-on: pull_request:
-  branches:
-    - main
+on: 
+  pull_request:
+    branches:
+      - main
 jobs:
   check-bats-version:
     runs-on: ubuntu-latest
