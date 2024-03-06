@@ -57,7 +57,7 @@ def start_spark(app_name='my_spark_app', master='local[*]', jar_packages=[],
     flag_repl = not(hasattr(__main__, '__file__'))
     #flag_repl = hasattr(__main__, '__file__')
     flag_debug = 'DEBUG' in environ.keys()
-    flag_dbr = 'DB_CLUSTER_NAME' in environ.keys()
+    flag_dbr = 'CLUSTER_DB_HOME' in environ.keys()
 
     #print(clstmode)
 
