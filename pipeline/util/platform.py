@@ -6,7 +6,7 @@ import __main__
 
 from os import environ, listdir, path
 import json
-from pyspark import SparkFiles
+from pyspark import SparkFiles, SparkConf
 from pyspark.sql import SparkSession
 import pyspark
 
@@ -54,27 +54,32 @@ def start_spark(app_name='my_spark_app', master='local[*]', jar_packages=[],
     """
 
     # detect execution environment
-    flag_repl = not(hasattr(__main__, '__file__'))
-    #flag_repl = hasattr(__main__, '__file__')
+    #flag_repl = not(hasattr(__main__, '__file__'))
+    flag_repl = hasattr(__main__, '__file__')
     flag_debug = 'DEBUG' in environ.keys()
+    flag_dbr = 'CLUSTER_DB_HOME' in environ.keys()
 
     #print(clstmode)
 
-    if ((not (flag_repl or flag_debug)) and clstmode=='1'):
+    if ((not (flag_repl or flag_debug)) and (clstmode=='1' or flag_dbr)):
         # get Spark session factory
-        #print('cluster')
+        print('cluster')
         spark_builder = (
             SparkSession
             .builder
-            .appName(app_name))
+            .config('storage.landed','abfss://landed@mcsars1dlsg2.dfs.core.windows.net/addressmatching')
+            .config('storage.curated','abfss://curated@mcsars1dlsg2.dfs.core.windows.net/addressmatching')
+            .appName(app_name + '_cluster'))
     else:
         # get Spark session factory
-        #print('local')
+        print('local')
         spark_builder = (
             SparkSession
             .builder
             .master(master)
-            .appName(app_name))
+            .config('storage.landed',r'C:\PalProjects\addressmatching')
+            .config('storage.curated',r'C:\PalProjects\addressmatching')
+            .appName(app_name + '_local'))
 
         # create Spark JAR packages string
         spark_jars_packages = ','.join(list(jar_packages))
