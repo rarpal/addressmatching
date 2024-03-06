@@ -7,5 +7,7 @@ jobs:
   unittesting:
     runs-on: ubuntu-latest
     steps:
-      - name: run a command
-        run: echo "Wow!"
+      - name: Checkut code
+        uses: actions/checkout@v4
+      - name: List output
+        run: ls
