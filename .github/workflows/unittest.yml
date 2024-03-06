@@ -4,7 +4,7 @@ on:
     branches:
       - main
 jobs:
-  check-bats-version:
+  unittesting:
     runs-on: ubuntu-latest
     steps:
       - name: run a command
