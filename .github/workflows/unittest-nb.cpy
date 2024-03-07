@@ -10,10 +10,8 @@ jobs:
     steps:
       - name: Checkut code
         uses: actions/checkout@v4
-      - name: Install databricks CLI
-        run: |
-         curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
       - name: Run unittest job
+        uses: databricks/run-notebook@v0
         env:
           DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
