@@ -20,4 +20,4 @@ jobs:
           JOB_ID: '175058359215350'
           WAIT_TIMEOUT: '20m0s'
         run: |
-          databricks jobs run-now $JOB_ID --timeout $WAIT_TIMEOUT
+          databricks repos list
