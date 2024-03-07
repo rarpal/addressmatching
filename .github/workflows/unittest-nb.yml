@@ -16,6 +16,6 @@ jobs:
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         uses: databricks/run-notebook@v0
         with:
-          local-notebook-path: test/testpipeline/test_transform
+          local-notebook-path: test/testpipeline/test_transform.ipynb
           existing-cluster-id: 0305-173512-wwwltma1
           git-commit: "${{ github.event.pull_request.head.sha }}"
