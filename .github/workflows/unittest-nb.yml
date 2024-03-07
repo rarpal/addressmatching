@@ -11,11 +11,11 @@ jobs:
       - name: Checkut code
         uses: actions/checkout@v4
       - name: Run unittest job
-        uses: databricks/run-notebook@v0
         env:
           DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
-          JOB_ID: '175058359215350'
-          WAIT_TIMEOUT: '20m0s'
-        run: |
-          databricks jobs run-now $JOB_ID --timeout $WAIT_TIMEOUT
+        uses: databricks/run-notebook@v0
+        with:
+          local-notebook-path: test/testpipeline/test_transform
+          existing-cluster-id: 0305-173512-wwwltma1
+          git-commit: "${{ github.event.pull_request.head.sha }}"
