@@ -17,5 +17,6 @@ jobs:
         uses: databricks/run-notebook@v0
         with:
           local-notebook-path: test/testpipeline/test_transform.ipynb
-          existing-cluster-id: 0305-173512-wwwltma1
+          # run notebook code from the PR's head commit, otherwise use github.sha.
           git-commit: "${{ github.event.pull_request.head.sha || github.sha }}"
+          existing-cluster-id: 0305-173512-wwwltma1
