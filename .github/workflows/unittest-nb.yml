@@ -20,11 +20,3 @@ jobs:
           # run notebook code from the PR's head commit, otherwise use github.sha.
           git-commit: "${{ github.event.pull_request.head.sha || github.sha }}"
           existing-cluster-id: 0305-173512-wwwltma1
-          # Grant all users view permission on the notebook results
-          access-control-list-json: >
-            [
-              {
-                "group_name": "users",
-                "permission_level": "CAN_VIEW"
-              }
-            ]
