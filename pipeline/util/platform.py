@@ -9,6 +9,7 @@ import json
 from pyspark import SparkFiles, SparkConf
 from pyspark.sql import SparkSession
 import pyspark
+from delta import *
 
 from pipeline.util import logging
 
@@ -70,6 +71,9 @@ def start_spark(app_name='my_spark_app', master='local[*]', jar_packages=[],
             .config('storage.landed','abfss://landed@mcsars1dlsg2.dfs.core.windows.net/addressmatching')
             .config('storage.curated','abfss://curated@mcsars1dlsg2.dfs.core.windows.net/addressmatching')
             .appName(app_name + '_cluster'))
+        
+        # create spark session
+        spark_sess = spark_builder.getOrCreate()
     else:
         # get Spark session factory
         print('local')
@@ -77,8 +81,10 @@ def start_spark(app_name='my_spark_app', master='local[*]', jar_packages=[],
             SparkSession
             .builder
             .master(master)
-            .config('storage.landed',r'C:\PalProjects\addressmatching')
-            .config('storage.curated',r'C:\PalProjects\addressmatching')
+            .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension")
+            .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog")
+            .config('storage.landed',r'C:/PalProjects/addressmatching')
+            .config('storage.curated',r'C:/PalProjects/addressmatching')
             .appName(app_name + '_local'))
 
         # create Spark JAR packages string
@@ -87,13 +93,17 @@ def start_spark(app_name='my_spark_app', master='local[*]', jar_packages=[],
 
         spark_files = ','.join(list(files))
         spark_builder.config('spark.files', spark_files)
+        spark_builder.enableHiveSupport()
 
         # add other config params
         for key, val in spark_config.items():
             spark_builder.config(key, val)
 
-    # create session and retrieve Spark logger object
-    spark_sess = spark_builder.getOrCreate()
+        # create spark session
+        #spark_sess = spark_builder.getOrCreate()
+        spark_sess = configure_spark_with_delta_pip(spark_builder).getOrCreate()
+
+    # retrieve Spark logger object
     spark_logger = logging.Log4j(spark_sess)
 
     # get config file if sent to cluster with --files
